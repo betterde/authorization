@@ -1,0 +1,17 @@
+{
+    "name": "betterde/authorization",
+    "description": "Authorization managerment package",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "betterde",
+            "email": "george@betterde.com"
+        }
+    ],
+    "require": {
+        "betterde/role": "~2.1",
+        "betterde/permission": "~2.0"
+    },
+    "minimum-stability": "dev"
+}
