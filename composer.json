@@ -10,8 +10,16 @@
         }
     ],
     "require": {
+        "php": "~7.1",
         "betterde/role": "~2.1",
         "betterde/permission": "~2.0"
     },
-    "minimum-stability": "dev"
+    "minimum-stability": "dev",
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Betterde\\Authorization\\Providers\\AuthorizationServiceProvider"
+            ]
+        }
+    }
 }
