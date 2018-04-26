@@ -10,6 +10,7 @@
         }
     ],
     "require": {
+        "php": "~7.1",
         "betterde/role": "~2.1",
         "betterde/permission": "~2.0"
     },
