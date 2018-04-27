@@ -8,11 +8,11 @@ interface AuthorizationContract
 
     public function permissions();
 
-    public function syncRole();
+    public function syncRole(array $codes, $detaching = true);
 
-    public function syncPermission();
+    public function syncPermission(array $codes, $detaching = true);
 
-    public function hasRole();
+    public function hasRole(string $code);
 
-    public function hasPermission();
+    public function hasPermission(string $code);
 }
