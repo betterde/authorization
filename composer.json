@@ -17,7 +17,7 @@
     "minimum-stability": "dev",
     "autoload": {
         "psr-4": {
-            "Betterde\\Authorization\\": "src"
+            "Betterde\\Authorization\\": "src/"
         }
     },
     "extra": {
