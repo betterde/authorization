@@ -11,8 +11,8 @@
     ],
     "require": {
         "php": "~7.1",
-        "betterde/role": "~2.1",
-        "betterde/permission": "~2.0"
+        "betterde/role": "~2.3",
+        "betterde/permission": "~2.3"
     },
     "minimum-stability": "dev",
     "autoload": {
