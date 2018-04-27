@@ -15,6 +15,11 @@
         "betterde/permission": "~2.0"
     },
     "minimum-stability": "dev",
+    "autoload": {
+        "psr-4": {
+            "Betterde\\Authorization\\": "src"
+        }
+    },
     "extra": {
         "laravel": {
             "providers": [
