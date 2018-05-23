@@ -6,7 +6,6 @@ use Exception;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Redis;
-use Betterde\Role\Contracts\RoleContract;
 use Betterde\Authorization\AuthorizationException;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
@@ -21,7 +20,7 @@ trait HasRole
      */
     public function roles()
     {
-        return $this->belongsToMany(RoleContract::class, config('authorization.relation.user_role'), 'user_id', 'role_code', 'id', 'code');
+        return $this->belongsToMany(config('role.model'), config('authorization.relation.user_role'), 'user_id', 'role_code', 'id', 'code');
     }
 
     /**
@@ -34,13 +33,13 @@ trait HasRole
      */
     public function hasRole(string $code)
     {
-        $permissions = $this->permissions;
-        if (is_array($permissions)) {
-            return array_has($permissions, $code);
+        $roles = $this->roles;
+        if (is_array($roles)) {
+            return array_has($roles, $code);
         }
 
-        if ($permissions instanceof Collection) {
-            return $permissions->contains($code);
+        if ($roles instanceof Collection) {
+            return $roles->contains($code);
         }
 
         return false;

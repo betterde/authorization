@@ -7,7 +7,6 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redis;
 use Betterde\Authorization\AuthorizationException;
-use Betterde\Permission\Contracts\PermissionContract;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 trait HasPermission
@@ -21,7 +20,7 @@ trait HasPermission
      */
     public function permissions()
     {
-        return $this->belongsToMany(PermissionContract::class, config('authorization.relation.user_permission'), 'user_id', 'permission_code', 'id', 'code');
+        return $this->belongsToMany(config('permission.model'), config('authorization.relation.user_permission'), 'user_id', 'permission_code', 'id', 'code');
     }
 
     /**
