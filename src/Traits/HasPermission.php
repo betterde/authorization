@@ -35,7 +35,14 @@ trait HasPermission
     {
         $permissions = $this->permissions;
         if (is_array($permissions)) {
-            return array_has($permissions, $code);
+            $res = false;
+            foreach ($permissions as $v){
+                if($v->permission_code==$code){
+                    $res = true;
+                    break;
+                }
+            }
+            return $res;
         }
 
         if ($permissions instanceof Collection) {
