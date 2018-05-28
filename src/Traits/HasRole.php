@@ -96,7 +96,7 @@ trait HasRole
             $roles = json_decode(Redis::connection(config('authorization.cache.database'))
                 ->hget(config('authorization.cache.prefix') . ':user_roles', $this->id));
             if(empty($roles)){
-            	$roles = DB::table(config('authorization.relation.user_role'))->select('role_code')->get()->toArray();
+            	$roles = DB::table(config('authorization.relation.user_role'))->select('role_code')->where('user_id',$this->id)->get()->toArray();
 	            if (!empty($roles)) {
 	                Redis::connection(config('authorization.cache.database'))->hset(config('authorization.cache.prefix') . ':user_roles', $this->id, json_encode($roles));
 	            }
