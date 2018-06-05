@@ -35,7 +35,14 @@ trait HasRole
     {
         $roles = $this->roles;
         if (is_array($roles)) {
-            return array_has($roles, $code);
+            $res = false;
+            foreach ($roles as $v){
+                if($v->role_code==$code){
+                    $res = true;
+                    break;
+                }
+            }
+            return $res;
         }
 
         if ($roles instanceof Collection) {
@@ -61,15 +68,15 @@ trait HasRole
             try {
                 $result = $this->roles()->sync($codes, $detaching);
 
-                Redis::connection(config('authorization.cache.database'))->hdel(config('authorization.cache.prefix' . ':user_roles'), $this->id);
+                Redis::connection(config('authorization.cache.database'))->hdel(config('authorization.cache.prefix') . ':user_roles', $this->id);
 
                 if (!empty($result)) {
-                    Redis::connection(config('authorization.cache.database'))->hset(config('authorization.cache.prefix' . ':user_roles'), $this->id, json_encode($result));
+                    Redis::connection(config('authorization.cache.database'))->hset(config('authorization.cache.prefix') . ':user_roles', $this->id, json_encode($result));
                 }
 
                 return $result;
             } catch (Exception $exception) {
-                throw new AuthorizationException('更新用户权限失败', 500);
+                throw new AuthorizationException('更新用户角色失败', 500);
             }
         }
 
@@ -88,11 +95,14 @@ trait HasRole
         if (config('authorization.cache.enable')) {
             $roles = json_decode(Redis::connection(config('authorization.cache.database'))
                 ->hget(config('authorization.cache.prefix') . ':user_roles', $this->id));
+            if(empty($roles)){
+            	$roles = DB::table(config('authorization.relation.user_role'))->select('role_code')->where('user_id',$this->id)->get()->toArray();
+	            if (!empty($roles)) {
+	                Redis::connection(config('authorization.cache.database'))->hset(config('authorization.cache.prefix') . ':user_roles', $this->id, json_encode($roles));
+	            }
+            }
         } else {
             $roles = DB::table(config('authorization.relation.user_role'))->select('role_code')->get()->toArray();
-            if (! empty($roles) && config('authorization.cache.enable')) {
-                Redis::connection(config('authorization.cache.database'))->hset(config('authorization.cache.prefix' . ':user_roles'), $this->id, json_encode($roles));
-            }
         }
 
         return $roles;

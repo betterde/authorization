@@ -35,7 +35,14 @@ trait HasPermission
     {
         $permissions = $this->permissions;
         if (is_array($permissions)) {
-            return array_has($permissions, $code);
+            $res = false;
+            foreach ($permissions as $v){
+                if($v->permission_code==$code){
+                    $res = true;
+                    break;
+                }
+            }
+            return $res;
         }
 
         if ($permissions instanceof Collection) {
@@ -60,10 +67,10 @@ trait HasPermission
         if (is_array($codes)) {
             try {
                 $result = $this->permissions()->sync($codes, $detaching);
-                Redis::connection(config('authorization.cache.database'))->hdel(config('authorization.cache.prefix' . ':user_permissions'), $this->id);
+                Redis::connection(config('authorization.cache.database'))->hdel(config('authorization.cache.prefix') . ':user_permissions', $this->id);
 
                 if (!empty($result)) {
-                    Redis::connection(config('authorization.cache.database'))->hset(config('authorization.cache.prefix' . ':user_permissions'), $this->id, json_encode($result));
+                    Redis::connection(config('authorization.cache.database'))->hset(config('authorization.cache.prefix') . ':user_permissions', $this->id, json_encode($result));
                 }
 
                 return $result;
@@ -87,13 +94,15 @@ trait HasPermission
         if (config('authorization.cache.enable')) {
             $permissions = json_decode(Redis::connection(config('authorization.cache.database'))
                 ->hget(config('authorization.cache.prefix') . ':user_permissions', $this->id));
+            if(empty($permissions)){
+                $permissions = DB::table(config('authorization.relation.user_permission'))->select('permission_code')->get()->toArray();
+                if (!empty($permissions)) {
+                Redis::connection(config('authorization.cache.database'))->hset(config('authorization.cache.prefix') . ':user_permissions', $this->id, json_encode($permissions));
+                }
+            }
         } else {
             $permissions = DB::table(config('authorization.relation.user_permission'))->select('permission_code')->get()->toArray();
-            if ($permissions->isNotEmpty() && config('authorization.cache.enable')) {
-                Redis::connection(config('authorization.cache.database'))->hset(config('authorization.cache.prefix' . ':user_permissions'), $this->id, json_encode($permissions));
-            }
         }
-
         return $permissions;
     }
 }
